@@ -20,22 +20,20 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Map<CategoryType, String> categoryKeywords = Map.of(
-            CategoryType.TASK,          "do,meeting,client,project,deadline,apply,job,interview,clean,gather,form,create",
+            CategoryType.TASK,          "improve,launch,do,meeting,client,project,deadline,apply,job,interview,clean,gather,form,create",
             CategoryType.SHOPPING,      "buy,price,order,shop",
-            CategoryType.COOKING,       "recipe,pour,sizzle",
-            CategoryType.SPORT,         "gym,sets,workout,dumbbell,tennis,racket",
+            CategoryType.COOKING,       "recipe,pour,sizzle,cook",
+            CategoryType.SPORT,         "exercise,gym,sets,workout,dumbbell,tennis,racket",
             CategoryType.HEALTH,        "neuron,brain,heart,hair,doctor,diet,run",
             CategoryType.UNCATEGORIZED, ""
         );
 
         categoryKeywords.forEach((type, keywords) -> {
-            if (categoryRepository.findByCategory(type).isEmpty()) {
-                Category category = new Category();
-                category.setCategory(type);
-                category.setKeywords(keywords);
-                categoryRepository.save(category);
-                System.out.println("Seeded category: " + type);
-            }
+            Category category = categoryRepository.findByCategory(type)
+                    .orElse(new Category());
+            category.setCategory(type);
+            category.setKeywords(keywords);
+            categoryRepository.save(category);
         });
     }
 }

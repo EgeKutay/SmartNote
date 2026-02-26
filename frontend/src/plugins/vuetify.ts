@@ -11,8 +11,19 @@ import 'vuetify/styles'
 
 export default createVuetify({
   theme: {
-    defaultTheme: 'system',
-    utilities: false,
+    defaultTheme: 'light',
+    themes: {
+      light: {
+        colors: {
+          primary: '#2563eb',
+        },
+      },
+      dark: {
+        colors: {
+          primary: '#60a5fa',
+        },
+      },
+    },
   },
   display: {
     mobileBreakpoint: 'md',

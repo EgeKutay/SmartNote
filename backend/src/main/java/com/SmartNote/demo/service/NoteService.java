@@ -41,8 +41,10 @@ public class NoteService {
     }
 
     public List<Note> findFiltered(Long userId, String search, CategoryType category) {
-        String searchParam = (search != null && !search.isBlank()) ? search.trim() : null;
-        return noteRepository.findByUserWithFilters(userId, searchParam, category);
+        if (search == null || search.isBlank()) {
+            return noteRepository.findByUserWithCategory(userId, category);
+        }
+        return noteRepository.findByUserWithSearchAndCategory(userId, search.trim(), category);
     }
 
     public void softDelete(Long id) {

@@ -43,7 +43,7 @@ public class AuthController {
             User saved = userService.create(user);
 
             String token = jwtUtil.generateToken(saved.getEmail(), saved.getId());
-            return ResponseEntity.ok(new AuthResponse(token, saved.getId(), saved.getUsername()));
+            return ResponseEntity.ok(new AuthResponse(token, saved.getId(), saved.getUsername(), saved.getEmail()));
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email or username already exists.");
         }
@@ -63,6 +63,6 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId());
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getUsername()));
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getUsername(), user.getEmail()));
     }
 }
