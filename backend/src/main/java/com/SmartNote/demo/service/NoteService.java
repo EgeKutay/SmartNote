@@ -23,12 +23,12 @@ public class NoteService {
     }
 
     public Note create(Note note) {
-        note.setCategory(resolveCategory(note.getContent()));
+        note.setCategory(resolveCategory(note.getTitle(), note.getContent()));
         return noteRepository.save(note);
     }
 
     public Note update(Note note) {
-        note.setCategory(resolveCategory(note.getContent()));
+        note.setCategory(resolveCategory(note.getTitle(), note.getContent()));
         return noteRepository.save(note);
     }
 
@@ -52,14 +52,15 @@ public class NoteService {
         });
     }
 
-    // Scans note content against each category's keywords.
+    // Scans note title + content against each category's keywords.
     // Returns the first matching Category, or UNCATEGORIZED as fallback.
-    private Category resolveCategory(String content) {
-        if (content == null || content.isBlank()) {
+    private Category resolveCategory(String title, String content) {
+        String combined = (title != null ? title : "") + " " + (content != null ? content : "");
+        if (combined.isBlank()) {
             return getUncategorized();
         }
 
-        String lowerContent = content.toLowerCase();
+        String lowerContent = combined.toLowerCase();
 
         List<Category> allCategories = categoryRepository.findAll();
 

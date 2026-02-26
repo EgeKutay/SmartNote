@@ -39,6 +39,7 @@ public class NoteController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Note note = new Note();
+        note.setTitle(request.getTitle());
         note.setContent(request.getContent());
         note.setUser(user);
 
@@ -73,6 +74,7 @@ public class NoteController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
         }
 
+        note.setTitle(request.getTitle());
         note.setContent(request.getContent());
         Note saved = noteService.update(note);
         return ResponseEntity.ok(new NoteResponse(saved));

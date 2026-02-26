@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 public class NoteResponse {
     private Long id;
+    private String title;
     private String content;
     private CategoryType category;
     private LocalDateTime createdDate;
@@ -14,6 +15,7 @@ public class NoteResponse {
 
     public NoteResponse(Note note) {
         this.id = note.getId();
+        this.title = note.getTitle();
         this.content = note.getContent();
         this.category = note.getCategory() != null ? note.getCategory().getCategory() : null;
         this.createdDate = note.getCreatedDate();
@@ -21,6 +23,7 @@ public class NoteResponse {
     }
 
     public Long getId() { return id; }
+    public String getTitle() { return title; }
     public String getContent() { return content; }
     public CategoryType getCategory() { return category; }
     public LocalDateTime getCreatedDate() { return createdDate; }
