@@ -2,6 +2,7 @@ package com.SmartNote.demo.controller;
 
 import com.SmartNote.demo.dto.NoteRequest;
 import com.SmartNote.demo.dto.NoteResponse;
+import com.SmartNote.demo.model.CategoryType;
 import com.SmartNote.demo.model.Note;
 import com.SmartNote.demo.model.User;
 import com.SmartNote.demo.service.NoteService;
@@ -46,11 +47,13 @@ public class NoteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NoteResponse>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<NoteResponse>> getAll(@AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestParam(required = false) String search,
+                                                     @RequestParam(required = false) CategoryType category) {
         User user = userService.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<NoteResponse> notes = noteService.findByUser(user.getId())
+        List<NoteResponse> notes = noteService.findFiltered(user.getId(), search, category)
                 .stream().map(NoteResponse::new).toList();
 
         return ResponseEntity.ok(notes);
