@@ -7,7 +7,6 @@ import com.SmartNote.demo.repository.CategoryRepository;
 import com.SmartNote.demo.repository.NoteRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,19 +15,21 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
     private final CategoryRepository categoryRepository;
+    private final GeminiService geminiService;
 
-    public NoteService(NoteRepository noteRepository, CategoryRepository categoryRepository) {
+    public NoteService(NoteRepository noteRepository, CategoryRepository categoryRepository, GeminiService geminiService) {
         this.noteRepository = noteRepository;
         this.categoryRepository = categoryRepository;
+        this.geminiService = geminiService;
     }
 
     public Note create(Note note) {
-        note.setCategory(resolveCategory(note.getTitle(), note.getContent()));
+        enrichWithAI(note);
         return noteRepository.save(note);
     }
 
     public Note update(Note note) {
-        note.setCategory(resolveCategory(note.getTitle(), note.getContent()));
+        enrichWithAI(note);
         return noteRepository.save(note);
     }
 
@@ -54,30 +55,16 @@ public class NoteService {
         });
     }
 
-    // Scans note title + content against each category's keywords.
-    // Returns the first matching Category, or UNCATEGORIZED as fallback.
-    private Category resolveCategory(String title, String content) {
-        String combined = (title != null ? title : "") + " " + (content != null ? content : "");
-        if (combined.isBlank()) {
-            return getUncategorized();
+    // Uses Gemini AI to generate a title (if blank) and classify the category.
+    private void enrichWithAI(Note note) {
+        if (note.getTitle() == null || note.getTitle().isBlank()) {
+            note.setTitle(geminiService.generateTitle(note.getContent()));
         }
 
-        String lowerContent = combined.toLowerCase();
-
-        List<Category> allCategories = categoryRepository.findAll();
-
-        for (Category category : allCategories) {
-            if (category.getCategory() == CategoryType.UNCATEGORIZED) continue;
-            if (category.getKeywords() == null || category.getKeywords().isBlank()) continue;
-
-            String[] keywords = category.getKeywords().split(",");
-            boolean matched = Arrays.stream(keywords)
-                    .map(String::trim)
-                    .anyMatch(keyword -> lowerContent.contains(keyword.toLowerCase()));
-            if (matched) return category;
-        }
-
-        return getUncategorized();
+        CategoryType categoryType = geminiService.classifyCategory(note.getTitle(), note.getContent());
+        Category category = categoryRepository.findByCategory(categoryType)
+                .orElseGet(this::getUncategorized);
+        note.setCategory(category);
     }
 
     private Category getUncategorized() {

@@ -1,3 +1,6 @@
+### Secrets ###
+/backend/src/main/resources/application.properties
+
 ### Backend Root ###
 /backend/HELP.md
 /backend/target/

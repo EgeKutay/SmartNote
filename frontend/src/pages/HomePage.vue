@@ -135,40 +135,54 @@
     </v-main>
 
     <!-- Create / Edit dialog -->
-    <v-dialog v-model="dialog" max-width="560" rounded="lg">
+    <v-dialog v-model="dialog" max-width="560" rounded="lg" :persistent="saving">
       <v-card rounded="lg">
         <v-card-title class="pa-5 pb-3 text-h6">
           {{ editingNote ? "Edit Note" : "New Note" }}
         </v-card-title>
-        <v-card-text class="px-5 pb-2">
-          <v-text-field
-            v-model="form.title"
-            label="Title (optional)"
-            variant="outlined"
-            density="comfortable"
-            class="mb-3"
-          />
-          <v-textarea
-            v-model="form.content"
-            label="Content"
-            variant="outlined"
-            rows="5"
-            auto-grow
-          />
-        </v-card-text>
-        <v-card-actions class="px-5 pb-4">
-          <v-spacer />
-          <v-btn variant="text" @click="dialog = false">Cancel</v-btn>
-          <v-btn
-            color="primary"
-            variant="flat"
-            rounded="lg"
-            :loading="saving"
-            @click="saveNote"
-          >
-            {{ editingNote ? "Save" : "Create" }}
-          </v-btn>
-        </v-card-actions>
+
+        <!-- AI loading state -->
+        <template v-if="saving">
+          <v-card-text class="d-flex flex-column align-center justify-center py-10">
+            <v-progress-circular indeterminate color="primary" size="52" class="mb-4" />
+            <p class="text-body-1 font-weight-medium">AI is analyzing your note...</p>
+            <p class="text-caption text-medium-emphasis mt-1">
+              Categorizing and generating title if needed
+            </p>
+          </v-card-text>
+        </template>
+
+        <!-- Form -->
+        <template v-else>
+          <v-card-text class="px-5 pb-2">
+            <v-text-field
+              v-model="form.title"
+              label="Title (optional — AI will generate one)"
+              variant="outlined"
+              density="comfortable"
+              class="mb-3"
+            />
+            <v-textarea
+              v-model="form.content"
+              label="Content"
+              variant="outlined"
+              rows="5"
+              auto-grow
+            />
+          </v-card-text>
+          <v-card-actions class="px-5 pb-4">
+            <v-spacer />
+            <v-btn variant="text" @click="dialog = false">Cancel</v-btn>
+            <v-btn
+              color="primary"
+              variant="flat"
+              rounded="lg"
+              @click="saveNote"
+            >
+              {{ editingNote ? "Save" : "Create" }}
+            </v-btn>
+          </v-card-actions>
+        </template>
       </v-card>
     </v-dialog>
 
