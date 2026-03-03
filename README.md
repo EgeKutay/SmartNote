@@ -9,7 +9,7 @@ When tokens runs out it uses simple inbuild algorithm to decide categorization b
 ## Prerequisites
 
 - Java 17+
-- PostgreSQL 18 (database: `smartnote`)
+- PostgreSQL 18 
 - Node.js + pnpm
 
 ---
