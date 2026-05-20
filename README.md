@@ -1,6 +1,6 @@
 # Smart Note Application
 
-A **lightweight** and **intelligent** note-taking app that automatically categorizes your text based on your input by sending your input to GeminiAI. Also, if you haven't put title it generates title for you based on text.
+A **lightweight** and **intelligent** note-taking app that automatically categorizes and automatically gives title based on your text by sending your input to GeminiAI. Also, if you haven't put title it generates title for you based on text.
 When tokens runs out it uses simple inbuild algorithm to decide categorization based on some keywords inside the text. 
 
 ---
